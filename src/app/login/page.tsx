@@ -1,3 +1,4 @@
+// app/login/page.tsx
 'use client'
 
 import { useState } from 'react'
@@ -28,10 +29,12 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false) // State loading untuk UX
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setLoading(true) // Set loading saat proses login dimulai
 
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
@@ -40,13 +43,21 @@ export default function LoginPage() {
 
     if (error) {
       setError(error.message)
-    } else {
-      const user = data.user
-      if (user) {
-        await checkProfile(user.id, user.email!)
-      }
-      router.push('/dashboard')
+      setLoading(false) // Matikan loading jika ada error
+      return
     }
+
+    const user = data.user
+    if (user) {
+      await checkProfile(user.id, user.email!)
+    }
+
+    // Refresh the router to re-evaluate server components and cookies
+    // This is more reliable than a manual delay for session propagation
+    router.refresh() // Memicu refresh server components
+    router.push('/dashboard') // Navigasi ke dashboard
+
+    setLoading(false) // Matikan loading setelah navigasi
   }
 
   return (
@@ -75,9 +86,10 @@ export default function LoginPage() {
         {error && <p className="text-red-500 text-sm">{error}</p>}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          disabled={loading} // Disable tombol saat loading
         >
-          Login
+          {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>
     </main>
