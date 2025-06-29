@@ -16,9 +16,17 @@ const formatDate = (dateString: string | null) => {
     return new Date(dateString).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+// Interface untuk props
+interface Props {
+  params: Promise<{ slug: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
 // Fungsi untuk membuat metadata dinamis (penting untuk SEO)
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const article = await getArticleBySlug(params.slug);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  // Await the params since it's now a Promise in Next.js 15
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
 
   if (!article) {
     return {
@@ -46,8 +54,10 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function ArticleDetailPage({ params }: { params: { slug: string } }) {
-  const article = await getArticleBySlug(params.slug);
+export default async function ArticleDetailPage({ params }: Props) {
+  // Await the params since it's now a Promise in Next.js 15
+  const { slug } = await params;
+  const article = await getArticleBySlug(slug);
 
   // Jika artikel tidak ditemukan berdasarkan slug, tampilkan halaman 404
   if (!article) {
