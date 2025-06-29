@@ -19,7 +19,7 @@ export default function ArticleSection({ articles }: { articles: Article[] }) {
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section id="articles" className="py-20 bg-slate-900/70">
+    <section id="articles" className="py-20">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center text-slate-100 mb-12">Artikel Terbaru</h2>
         <motion.div 
