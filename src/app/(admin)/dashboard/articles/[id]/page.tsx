@@ -4,11 +4,13 @@ import ArticleForm from '@/components/dashboard/ArticleForm'
 import type { Article } from '@/types/database'
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export default async function EditArticlePage({ params }: Props) {
-  const { id } = params
+  // Await the params since it's now a Promise in Next.js 15
+  const { id } = await params
 
   const { data, error } = await supabase
     .from('articles')
