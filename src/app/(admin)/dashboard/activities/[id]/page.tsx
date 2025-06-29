@@ -4,15 +4,16 @@ import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import ActivityForm from '@/components/dashboard/ActivityForm'
 
-// Mendefinisikan tipe props secara eksplisit untuk halaman ini
+// Updated type definition for Next.js 15 - params is now a Promise
 type EditActivityPageProps = {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default async function EditActivityPage({ params }: EditActivityPageProps) {
-  const { id } = params
+  // Await the params since it's now a Promise in Next.js 15
+  const { id } = await params
 
   const { data, error } = await supabase
     .from('activities')
