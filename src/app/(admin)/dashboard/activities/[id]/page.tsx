@@ -4,14 +4,12 @@ import { notFound } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import ActivityForm from '@/components/dashboard/ActivityForm'
 
-// Updated type definition for Next.js 15 - params is now a Promise
-type EditActivityPageProps = {
-  params: Promise<{
-    id: string
-  }>
+interface PageProps {
+  params: Promise<{ id: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
-export default async function EditActivityPage({ params }: EditActivityPageProps) {
+export default async function EditActivityPage({ params }: PageProps) {
   // Await the params since it's now a Promise in Next.js 15
   const { id } = await params
 
