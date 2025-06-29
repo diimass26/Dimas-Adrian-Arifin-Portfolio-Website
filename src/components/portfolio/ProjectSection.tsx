@@ -25,7 +25,7 @@ export default function ProjectSection({ projects }: { projects: Project[] }) {
         >
           {projects.map(project => (
             <motion.div variants={cardVariants} key={project.id}>
-              <div className="group block bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col">
+              <div className="group bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col">
                 <div className="h-48 w-full overflow-hidden relative">
                   {/* [GANTI GAMBAR] Ganti dengan gambar thumbnail proyek */}
                   {project.image_url ? (

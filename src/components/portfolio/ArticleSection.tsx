@@ -30,7 +30,7 @@ export default function ArticleSection({ articles }: { articles: Article[] }) {
         >
           {articles.map(article => (
             <motion.div variants={cardVariants} key={article.id}>
-              <Link href={`/articles/${article.slug}`} className="group block bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col">
+              <Link href={`/articles/${article.slug}`} className="group bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col">
                 <div className="h-48 w-full overflow-hidden relative">
                   {/* [GANTI GAMBAR] Ganti dengan gambar thumbnail artikel */}
                   {article.image_url ? (

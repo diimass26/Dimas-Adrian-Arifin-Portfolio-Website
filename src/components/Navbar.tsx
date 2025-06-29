@@ -8,7 +8,7 @@ import clsx from 'clsx'
 const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Articles', href: '/articles' },
-  { name: 'Contact Me', href: '#contact' }, // Mengarah ke section 'contact' di halaman utama
+  { name: 'Contact Me', href: '/contact' }, // Mengarah ke section 'contact' di halaman utama
 ]
 
 export default function Navbar() {
