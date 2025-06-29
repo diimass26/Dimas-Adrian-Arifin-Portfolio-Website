@@ -24,3 +24,22 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* [FIX] Mengatasi Latar Belakang Putih pada Input Autofill di Tema Gelap */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* Trik ini menggunakan box-shadow inset untuk "mengecat ulang" latar belakang.
+    Warna #0f172a adalah warna slate-900 yang kita gunakan untuk background input.
+  */
+  -webkit-box-shadow: 0 0 0 30px #0f172a inset !important;
+  
+  /* Memaksa warna teks menjadi terang agar tidak hilang di latar belakang gelap.
+    Warna #e2e8f0 adalah warna slate-200 yang kita gunakan untuk teks input.
+  */
+  -webkit-text-fill-color: #e2e8f0 !important;
+
+  /* Mencegah transisi warna latar belakang yang aneh dari browser */
+  transition: background-color 5000s ease-in-out 0s;
+}
