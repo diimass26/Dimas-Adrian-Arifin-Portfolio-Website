@@ -1,7 +1,7 @@
 'use client'
-import Link from 'next/link'
 import { Code, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import type { Project } from '@/types/database' // Pastikan tipe Project sudah ada
 
 const cardVariants = {
@@ -29,7 +29,13 @@ export default function ProjectSection({ projects }: { projects: Project[] }) {
                 <div className="h-48 w-full overflow-hidden relative">
                   {/* [GANTI GAMBAR] Ganti dengan gambar thumbnail proyek */}
                   {project.image_url ? (
-                     <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+                     <Image 
+                       src={project.image_url} 
+                       alt={project.title} 
+                       width={400}
+                       height={192}
+                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                     />
                   ) : (
                     <div className="w-full h-full bg-slate-800 flex items-center justify-center">
                       <Code className="w-16 h-16 text-slate-600"/>
