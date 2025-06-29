@@ -1,6 +1,7 @@
 'use client'
 import type { Article } from '@/types/database';
 import Link from 'next/link';
+import Image from 'next/image'; // [FIX] Mengimpor komponen Image
 import { Newspaper, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -18,7 +19,7 @@ export default function ArticleSection({ articles }: { articles: Article[] }) {
   if (!articles || articles.length === 0) return null;
 
   return (
-    <section id="articles" className="py-20">
+    <section id="articles" className="py-20 bg-slate-900/70">
       <div className="container mx-auto">
         <h2 className="text-3xl font-bold text-center text-slate-100 mb-12">Artikel Terbaru</h2>
         <motion.div 
@@ -32,9 +33,15 @@ export default function ArticleSection({ articles }: { articles: Article[] }) {
             <motion.div variants={cardVariants} key={article.id}>
               <Link href={`/articles/${article.slug}`} className="group bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col">
                 <div className="h-48 w-full overflow-hidden relative">
-                  {/* [GANTI GAMBAR] Ganti dengan gambar thumbnail artikel */}
                   {article.image_url ? (
-                    <img src={article.image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    // [FIX] Mengganti <img> dengan <Image />
+                    <Image 
+                      src={article.image_url} 
+                      alt={article.title} 
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
                   ) : (
                     <div className="w-full h-full bg-slate-800 flex items-center justify-center"><Newspaper className="w-16 h-16 text-slate-600"/></div>
                   )}

@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useRef, type ElementType } from 'react'
+import { useState, useEffect, useRef } from 'react' // [FIX] 'ElementType' dihapus karena tidak digunakan
+import Image from 'next/image' // [FIX] Mengimpor komponen Image dari Next.js
 import { supabase } from '@/lib/supabase'
-import { Upload, Trash2, User, ImageOff, Save, LoaderCircle } from 'lucide-react'
+import { Upload, Trash2, ImageOff, Save, LoaderCircle } from 'lucide-react' // [FIX] 'User' dihapus karena tidak digunakan
 
 type Profile = {
   id: string
@@ -19,10 +20,6 @@ export default function ProfileForm() {
   const [deleting, setDeleting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  // Logika untuk fetch, update, upload, dan delete tidak diubah,
-  // hanya state loading yang disesuaikan namanya untuk kejelasan.
-  // (Semua fungsi handleUpdate, handleFileChange, handleDeleteAvatar, dll. tetap sama)
-
   const fetchProfile = async () => {
     setInitialLoading(true)
     const { data: { user } } = await supabase.auth.getUser()
@@ -35,6 +32,12 @@ export default function ProfileForm() {
       .select('*')
       .eq('id', user.id)
       .single()
+    
+    // [FIX] Menangani variabel 'error' yang tidak terpakai
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error.message)
+    }
+
     if (data) setProfile(data)
     setInitialLoading(false)
   }
@@ -151,19 +154,24 @@ export default function ProfileForm() {
           <h3 className="text-xl font-semibold text-slate-100">Avatar</h3>
           <div className="flex items-center gap-6">
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="Avatar" className="w-24 h-24 object-cover rounded-full border-2 border-slate-600" />
+              // [FIX] Mengganti <img> dengan <Image /> untuk optimasi
+              <Image 
+                src={profile.avatar_url} 
+                alt="Avatar" 
+                width={96} 
+                height={96}
+                className="w-24 h-24 object-cover rounded-full border-2 border-slate-600" 
+              />
             ) : (
               <div className="w-24 h-24 rounded-full bg-slate-700 flex items-center justify-center border-2 border-slate-600">
                 <ImageOff className="w-10 h-10 text-slate-500" />
               </div>
             )}
             <div className="flex items-center gap-3">
-              {/* Tombol palsu yang memicu input file asli */}
               <button type="button" onClick={() => fileInputRef.current?.click()} disabled={uploading} className="flex items-center gap-2 bg-slate-600 text-white px-4 py-2 rounded-md hover:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-wait">
                 {uploading ? <LoaderCircle className="animate-spin h-5 w-5"/> : <Upload className="h-5 w-5" />}
                 {uploading ? 'Mengunggah...' : 'Ubah Foto'}
               </button>
-              {/* Input file asli yang disembunyikan */}
               <input type="file" ref={fileInputRef} accept="image/*" onChange={handleFileChange} disabled={uploading} className="hidden" />
               
               {profile.avatar_url && (

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react' // [FIX] 'useEffect' dihapus karena tidak digunakan
+import Image from 'next/image' // [FIX] Mengimpor komponen Image dari Next.js
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Article } from '@/types/database'
-import { Save, LoaderCircle, UploadCloud, X, Image as ImageIcon, Lock, Unlock, ArrowLeft } from 'lucide-react'
+// [FIX] 'ImageIcon' dan 'ArrowLeft' dihapus karena tidak digunakan
+import { Save, LoaderCircle, UploadCloud, X, Lock, Unlock } from 'lucide-react' 
 import Link from 'next/link'
 
 interface ArticleFormProps {
@@ -138,7 +140,8 @@ export default function ArticleForm({ initialData }: ArticleFormProps) {
               <label className="block text-sm font-medium text-slate-300 mb-2">Thumbnail</label>
               {imagePreview ? (
                 <div className="relative w-full">
-                  <img src={imagePreview} alt="Pratinjau thumbnail" className="w-full h-auto object-cover rounded-lg border border-slate-700" />
+                  {/* [FIX] Mengganti <img> dengan <Image /> untuk optimasi */}
+                  <Image src={imagePreview} alt="Pratinjau thumbnail" width={500} height={281} className="w-full h-auto object-cover rounded-lg border border-slate-700" />
                   <button type="button" onClick={handleRemoveImage} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors"><X className="h-4 w-4" /></button>
                 </div>
               ) : (

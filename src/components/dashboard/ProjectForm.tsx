@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, KeyboardEvent } from 'react'
+import Image from 'next/image' // [FIX] Mengimpor komponen Image dari Next.js
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Project } from '@/types/database'
-import { Save, LoaderCircle, UploadCloud, X, Image as ImageIcon, Link as LinkIcon, Code } from 'lucide-react'
+// [FIX] Ikon yang tidak terpakai ('ImageIcon', 'LinkIcon', 'Code') telah dihapus
+import { Save, LoaderCircle, UploadCloud, X } from 'lucide-react'
 
 interface ProjectFormProps {
   initialData?: Project
@@ -152,7 +154,14 @@ export default function ProjectForm({ initialData }: ProjectFormProps) {
           <label className="block text-sm font-medium text-slate-300 mb-2">Thumbnail</label>
           {imagePreview ? (
             <div className="relative w-full max-w-lg">
-              <img src={imagePreview} alt="Pratinjau thumbnail" className="w-full h-auto object-cover rounded-lg border border-slate-700" />
+              {/* [FIX] Mengganti <img> dengan <Image /> */}
+              <Image 
+                src={imagePreview} 
+                alt="Pratinjau thumbnail" 
+                width={800} 
+                height={450}
+                className="w-full h-auto object-cover rounded-lg border border-slate-700" 
+              />
               <button type="button" onClick={handleRemoveImage} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors">
                 <X className="h-4 w-4" />
               </button>

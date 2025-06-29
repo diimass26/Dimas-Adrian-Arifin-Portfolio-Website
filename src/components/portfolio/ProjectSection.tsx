@@ -1,8 +1,10 @@
 'use client'
-import Link from 'next/link'
+
+import Image from 'next/image' // [FIX] Mengimpor komponen Image
+// [FIX] 'Link' dihapus dari import karena tidak digunakan
 import { Code, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
-import type { Project } from '@/types/database' // Pastikan tipe Project sudah ada
+import type { Project } from '@/types/database'
 
 const cardVariants = {
   hidden: { y: 50, opacity: 0 },
@@ -27,9 +29,15 @@ export default function ProjectSection({ projects }: { projects: Project[] }) {
             <motion.div variants={cardVariants} key={project.id}>
               <div className="group bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col">
                 <div className="h-48 w-full overflow-hidden relative">
-                  {/* [GANTI GAMBAR] Ganti dengan gambar thumbnail proyek */}
                   {project.image_url ? (
-                     <img src={project.image_url} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"/>
+                     // [FIX] Mengganti <img> dengan <Image /> untuk optimasi
+                     <Image 
+                        src={project.image_url} 
+                        alt={project.title} 
+                        fill 
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                     />
                   ) : (
                     <div className="w-full h-full bg-slate-800 flex items-center justify-center">
                       <Code className="w-16 h-16 text-slate-600"/>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image' // [FIX] Mengimpor komponen Image
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Project } from '@/types/database'
@@ -24,7 +25,7 @@ export default function ProjectsDashboardPage() {
         .order('created_at', { ascending: false })
 
       if (error) {
-        alert('Gagal mengambil data proyek: ' + error.message)
+        console.error('Gagal mengambil data proyek: ' + error.message)
       } else {
         setProjects(data)
       }
@@ -54,7 +55,7 @@ export default function ProjectsDashboardPage() {
     setIsDeleting(false)
 
     if (error) {
-      alert('Gagal menghapus proyek: ' + error.message)
+      console.error('Gagal menghapus proyek: ' + error.message)
     } else {
       setProjects(prev => prev.filter((p) => p.id !== id))
       setShowDeleteModal(false)
@@ -106,9 +107,16 @@ export default function ProjectsDashboardPage() {
 function ProjectCard({ project, onEdit, onDelete }: { project: Project, onEdit: () => void, onDelete: () => void }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-xl hover:border-green-500/50 hover:-translate-y-1">
-      <div className="h-48 w-full overflow-hidden">
+      <div className="h-48 w-full overflow-hidden relative">
         {project.image_url ? (
-          <img src={project.image_url} alt={project.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          // [FIX 1] Mengganti <img> dengan <Image />
+          <Image 
+            src={project.image_url} 
+            alt={project.title} 
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
         ) : (
           <div className="w-full h-full bg-slate-800 flex items-center justify-center">
             <Code className="w-16 h-16 text-slate-600" />
@@ -206,7 +214,8 @@ function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isDeleting, proje
               <h3 className="text-lg leading-6 font-bold text-slate-100">Hapus Proyek</h3>
               <div className="mt-2">
                 <p className="text-sm text-slate-400">
-                  Apakah Anda yakin ingin menghapus proyek <span className="font-bold text-slate-200">"{projectTitle}"</span>? Tindakan ini tidak dapat dibatalkan.
+                  {/* [FIX 2] Mengganti tanda kutip dengan entitas HTML */}
+                  Apakah Anda yakin ingin menghapus proyek <span className="font-bold text-slate-200">&ldquo;{projectTitle}&rdquo;</span>? Tindakan ini tidak dapat dibatalkan.
                 </p>
               </div>
             </div>

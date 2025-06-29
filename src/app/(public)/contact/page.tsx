@@ -2,17 +2,10 @@
 'use client'
 
 import { useState, FormEvent } from 'react';
-import type { Metadata } from 'next';
+// [FIX] 'Metadata' dihapus dari import karena tidak digunakan
 import { Mail, MapPin, Send, LoaderCircle } from 'lucide-react';
 import { FaGithub, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-
-// Metadata tidak bisa digunakan di Client Component, 
-// jadi ini hanya sebagai contoh jika Anda memisahkannya nanti.
-// export const metadata: Metadata = {
-//   title: 'Hubungi Saya | Dimas Adrian Arifin',
-//   description: 'Hubungi Dimas Adrian Arifin untuk kolaborasi, pertanyaan, atau sekadar menyapa.',
-// };
 
 const socialLinks = [
   { name: 'GitHub', icon: FaGithub, href: 'https://github.com/diimass26' },

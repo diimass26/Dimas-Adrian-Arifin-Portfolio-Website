@@ -1,4 +1,3 @@
-import Link from 'next/link'
 // Import ikon-ikon dari react-icons
 import { FaGithub, FaInstagram, FaLinkedin, FaTiktok } from 'react-icons/fa'
 

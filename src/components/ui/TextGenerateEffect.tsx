@@ -1,4 +1,3 @@
-// /src/components/ui/TextGenerateEffect.tsx
 'use client'
 
 import { useEffect } from 'react'
@@ -13,7 +12,10 @@ export const TextGenerateEffect = ({
   className?: string
 }) => {
   const [scope, animate] = useAnimate()
-  let wordsArray = words.split(' ')
+  // [FIX 1] Mengganti 'let' menjadi 'const' karena variabel tidak diubah lagi
+  const wordsArray = words.split(' ') 
+  
+  // [FIX 2] Menambahkan 'animate' ke dalam dependency array useEffect
   useEffect(() => {
     animate(
       'span',
@@ -25,7 +27,7 @@ export const TextGenerateEffect = ({
         delay: stagger(0.1),
       }
     )
-  }, [scope.current])
+  }, [animate])
 
   const renderWords = () => {
     return (

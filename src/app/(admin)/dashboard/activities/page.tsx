@@ -1,22 +1,24 @@
 'use client'
 
-import { useEffect, useState, Fragment } from 'react'
+// [FIX 1] 'Fragment' dihapus karena tidak digunakan
+import { useEffect, useState } from 'react' 
 import Link from 'next/link'
+import Image from 'next/image' // [FIX 3] Import komponen Image dari Next.js
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Activity } from '@/types/database'
-import { Plus, Edit, Trash2, Calendar, Briefcase, Award, LoaderCircle, Info } from 'lucide-react'
+// [FIX 2] 'Info' dihapus karena tidak digunakan
+import { Plus, Edit, Trash2, Calendar, Briefcase, Award, LoaderCircle } from 'lucide-react'
 
-// ... (Helper function formatDate tetap sama)
-const formatDate = (dateString: string) => {
+// Helper function untuk memformat tanggal
+const formatDate = (dateString: string | null) => {
+  if (!dateString) return 'Data tidak valid';
   return new Date(dateString).toLocaleDateString('id-ID', {
     year: 'numeric', month: 'long', day: 'numeric'
   })
 }
 
-
 export default function ActivitiesDashboardPage() {
-  // ... (Seluruh logika state dan fungsi di dalam komponen ini tetap sama)
   const [activities, setActivities] = useState<Activity[]>([])
   const [loading, setLoading] = useState(true)
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -33,13 +35,13 @@ export default function ActivitiesDashboardPage() {
         .order('start_date', { ascending: false })
 
       if (error) {
-        alert('Gagal mengambil data aktivitas: ' + error.message)
+        // Menggunakan console.error lebih baik daripada alert di production
+        console.error('Gagal mengambil data aktivitas: ' + error.message)
       } else {
         setActivities(data)
       }
       setLoading(false)
     }
-
     fetchActivities()
   }, [])
 
@@ -63,14 +65,13 @@ export default function ActivitiesDashboardPage() {
     setIsDeleting(false)
 
     if (error) {
-      alert('Gagal menghapus aktivitas: ' + error.message)
+        console.error('Gagal menghapus aktivitas: ' + error.message)
     } else {
       setActivities(prev => prev.filter((a) => a.id !== id))
       setShowDeleteModal(false)
       setSelectedActivity(null)
     }
   }
-
 
   return (
     <div className="p-8">
@@ -79,14 +80,12 @@ export default function ActivitiesDashboardPage() {
           <h1 className="text-3xl font-semibold text-slate-100">Daftar Aktivitas</h1>
           <p className="text-slate-400 mt-1">Kelola semua pengalaman, proyek, dan pencapaian Anda.</p>
         </div>
-        {/* [BERUBAH] Mengganti bg-blue-600 menjadi bg-yellow-500 */}
         <Link href="/dashboard/activities/new" className="flex items-center gap-2 bg-yellow-500 text-black px-5 py-2.5 rounded-md font-semibold hover:bg-yellow-600 transition-colors">
           <Plus className="h-5 w-5" />
           Tambah Aktivitas
         </Link>
       </div>
 
-      {/* ... (logika loading, empty state, dan mapping tetap sama) */}
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <CardSkeleton /><CardSkeleton /><CardSkeleton />
@@ -100,7 +99,6 @@ export default function ActivitiesDashboardPage() {
           ))}
         </div>
       )}
-
 
       {showDeleteModal && selectedActivity && (
         <DeleteConfirmationModal
@@ -119,9 +117,16 @@ export default function ActivitiesDashboardPage() {
 function ActivityCard({ activity, onEdit, onDelete }: { activity: Activity, onEdit: () => void, onDelete: () => void }) {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden flex flex-col group transition-all duration-300 hover:shadow-xl hover:border-yellow-500/50 hover:-translate-y-1">
-      <div className="h-48 w-full overflow-hidden">
+      <div className="h-48 w-full overflow-hidden relative"> {/* Menambahkan 'relative' untuk <Image> dengan prop 'fill' */}
         {activity.image_url ? (
-          <img src={activity.image_url} alt={activity.title} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+          // [FIX 3] Mengganti <img> dengan <Image /> dari Next.js untuk optimasi
+          <Image 
+            src={activity.image_url} 
+            alt={activity.title} 
+            fill // 'fill' akan membuat gambar mengisi div parent
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Membantu Next.js memilih ukuran gambar yang tepat
+          />
         ) : (
           <div className="w-full h-full bg-slate-800 flex items-center justify-center">
             <Briefcase className="w-16 h-16 text-slate-600" />
@@ -129,7 +134,6 @@ function ActivityCard({ activity, onEdit, onDelete }: { activity: Activity, onEd
         )}
       </div>
       <div className="p-5 flex flex-col flex-grow">
-        {/* [BERUBAH] Mengganti warna tag dari biru ke kuning */}
         <span className="inline-block bg-yellow-500/10 text-yellow-400 text-xs font-semibold px-2.5 py-1 rounded-full mb-3 self-start">{activity.type}</span>
         <h2 className="text-lg font-bold text-slate-100 flex-grow">{activity.title}</h2>
         <p className="text-slate-400 text-sm mt-1">{activity.organization}</p>
@@ -141,7 +145,6 @@ function ActivityCard({ activity, onEdit, onDelete }: { activity: Activity, onEd
         </div>
       </div>
       <div className="p-4 bg-slate-800 border-t border-slate-700 flex justify-end gap-3">
-        {/* [BERUBAH] Menambahkan hover warna kuning pada tombol Edit */}
         <button onClick={onEdit} className="flex items-center gap-2 text-sm text-slate-300 hover:text-yellow-400 transition-colors"><Edit className="h-4 w-4" /> Edit</button>
         <button onClick={onDelete} className="flex items-center gap-2 text-sm text-red-500 hover:text-red-400 transition-colors"><Trash2 className="h-4 w-4" /> Hapus</button>
       </div>
@@ -149,7 +152,7 @@ function ActivityCard({ activity, onEdit, onDelete }: { activity: Activity, onEd
   )
 }
 
-// ... (Komponen CardSkeleton tetap sama)
+// Komponen Skeleton
 function CardSkeleton() {
   return (
     <div className="bg-slate-800/50 border border-slate-700 rounded-lg animate-pulse">
@@ -167,7 +170,6 @@ function CardSkeleton() {
   )
 }
 
-
 // Komponen Empty State
 function EmptyState() {
   return (
@@ -175,7 +177,6 @@ function EmptyState() {
       <Award className="mx-auto h-12 w-12 text-slate-600" />
       <h3 className="mt-4 text-xl font-semibold text-slate-200">Belum Ada Aktivitas</h3>
       <p className="mt-2 text-slate-400">Mulai tambahkan pengalaman dan pencapaian Anda.</p>
-      {/* [BERUBAH] Mengganti bg-blue-600 menjadi bg-yellow-500 */}
       <Link href="/dashboard/activities/new" className="mt-6 inline-flex items-center gap-2 bg-yellow-500 text-black px-5 py-2.5 rounded-md font-semibold hover:bg-yellow-600 transition-colors">
         <Plus className="h-5 w-5" />
         Tambah Aktivitas Pertama Anda
@@ -184,7 +185,7 @@ function EmptyState() {
   )
 }
 
-// ... (Komponen DeleteConfirmationModal tetap sama)
+// Komponen Modal Konfirmasi Hapus
 function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isDeleting, activityTitle }: { isOpen: boolean, onClose: () => void, onConfirm: () => void, isDeleting: boolean, activityTitle: string }) {
   if (!isOpen) return null
 
@@ -200,7 +201,8 @@ function DeleteConfirmationModal({ isOpen, onClose, onConfirm, isDeleting, activ
               <h3 className="text-lg leading-6 font-bold text-slate-100">Hapus Aktivitas</h3>
               <div className="mt-2">
                 <p className="text-sm text-slate-400">
-                  Apakah Anda yakin ingin menghapus aktivitas <span className="font-bold text-slate-200">"{activityTitle}"</span>? Tindakan ini tidak dapat dibatalkan.
+                  {/* [FIX 4] Mengganti tanda kutip dengan entitas HTML */}
+                  Apakah Anda yakin ingin menghapus aktivitas <span className="font-bold text-slate-200">&ldquo;{activityTitle}&rdquo;</span>? Tindakan ini tidak dapat dibatalkan.
                 </p>
               </div>
             </div>

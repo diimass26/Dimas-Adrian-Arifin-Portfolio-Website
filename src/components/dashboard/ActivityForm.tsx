@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react' // [FIX] 'useEffect' dihapus karena tidak digunakan
+import Image from 'next/image' // [FIX] Mengimpor komponen Image dari Next.js
 import { supabase } from '@/lib/supabase'
 import { useRouter } from 'next/navigation'
 import type { Activity } from '@/types/database'
-import { Save, LoaderCircle, ChevronsUpDown, UploadCloud, X, Image as ImageIcon } from 'lucide-react'
+// [FIX] 'Image as ImageIcon' dihapus karena tidak digunakan
+import { Save, LoaderCircle, ChevronsUpDown, UploadCloud, X } from 'lucide-react'
 
 interface Props {
   initialData?: Activity
@@ -42,8 +44,6 @@ export default function ActivityForm({ initialData }: Props) {
   const handleRemoveImage = () => {
     setImageFile(null)
     setImagePreview(null)
-    // If there was an initial image, this effectively removes it from the form
-    // The actual deletion from storage happens on submit
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,17 +52,14 @@ export default function ActivityForm({ initialData }: Props) {
 
     let image_url = initialData?.image_url ?? null
 
-    // If a new file is selected OR the initial image was removed without a new one
     if (imageFile || (initialData?.image_url && !imagePreview)) {
-      // Remove old image if it exists
       if (initialData?.image_url) {
         const oldFile = new URL(initialData.image_url).pathname.split('/').pop()
         if (oldFile) await supabase.storage.from('activities').remove([oldFile])
       }
-      image_url = null; // Reset image_url, will be replaced if there's a new file
+      image_url = null;
     }
 
-    // Upload new image if one is present
     if (imageFile) {
       const ext = imageFile.name.split('.').pop()
       const filename = `activity-${Date.now()}.${ext}`
@@ -96,7 +93,7 @@ export default function ActivityForm({ initialData }: Props) {
     } else {
       alert('Aktivitas berhasil disimpan!')
       router.push('/dashboard/activities')
-      router.refresh() // Refresh server components that list activities
+      router.refresh()
     }
   }
 
@@ -154,7 +151,8 @@ export default function ActivityForm({ initialData }: Props) {
             <label className="block text-sm font-medium text-slate-300 mb-2">Gambar (opsional)</label>
             {imagePreview ? (
               <div className="relative w-full max-w-sm">
-                <img src={imagePreview} alt="Pratinjau aktivitas" className="w-full h-auto object-cover rounded-lg border border-slate-700" />
+                {/* [FIX] Mengganti <img> dengan <Image /> untuk optimasi */}
+                <Image src={imagePreview} alt="Pratinjau aktivitas" width={500} height={281} className="w-full h-auto object-cover rounded-lg border border-slate-700" />
                 <button type="button" onClick={handleRemoveImage} className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1.5 hover:bg-red-700 transition-colors">
                   <X className="h-4 w-4" />
                 </button>
@@ -174,7 +172,7 @@ export default function ActivityForm({ initialData }: Props) {
       </div>
       
       <div className="flex justify-end">
-        <button type="submit" disabled={saving} className="flex items-center gap-2 bg-yellow-500 text-white px-5 py-2.5 rounded-md font-semibold hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-wait">
+        <button type="submit" disabled={saving} className="flex items-center gap-2 bg-yellow-500 text-black px-5 py-2.5 rounded-md font-semibold hover:bg-yellow-600 transition-colors disabled:opacity-50 disabled:cursor-wait">
           {saving ? <LoaderCircle className="animate-spin h-5 w-5"/> : <Save className="h-5 w-5" />}
           {saving ? 'Menyimpan...' : (initialData ? 'Simpan Perubahan' : 'Tambah Aktivitas')}
         </button>

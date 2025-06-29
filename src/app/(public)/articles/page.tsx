@@ -23,7 +23,7 @@ function PortfolioArticleCard({ article }: { article: Awaited<ReturnType<typeof 
   return (
     <Link 
       href={`/articles/${article.slug}`} 
-      className="group block bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-blue-500 hover:-translate-y-1 shadow-lg hover:shadow-blue-500/10"
+      className="group bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden h-full flex flex-col transition-all duration-300 hover:border-blue-500 hover:-translate-y-1 shadow-lg hover:shadow-blue-500/10"
     >
       <div className="h-56 w-full overflow-hidden relative">
         {article.image_url ? (
