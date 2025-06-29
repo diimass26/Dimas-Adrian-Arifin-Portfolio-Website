@@ -36,3 +36,12 @@ export async function getOtherActivities(typesToExclude: string[]) {
       .order('start_date', { ascending: false });
     return data ?? [];
 }
+
+export async function getLatestProjects(limit = 2) {
+  const { data } = await supabase
+    .from('projects')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  return data ?? [];
+}
