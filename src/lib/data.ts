@@ -1,0 +1,38 @@
+// /src/lib/data.ts
+import { supabase } from './supabase';
+
+// Mengambil profil (meskipun kita hardcode bio, ini untuk masa depan)
+export async function getProfile() {
+  const { data } = await supabase.from('profiles').select('*').single();
+  return data;
+}
+
+// Mengambil artikel terbaru
+export async function getLatestArticles(limit = 3) {
+  const { data } = await supabase
+    .from('articles')
+    .select('*')
+    .order('published_at', { ascending: false })
+    .limit(limit);
+  return data ?? [];
+}
+
+// Mengambil aktivitas berdasarkan tipe (misal: ['Internship', 'Organization'])
+export async function getActivitiesByType(types: string[]) {
+  const { data } = await supabase
+    .from('activities')
+    .select('*')
+    .in('type', types)
+    .order('start_date', { ascending: false });
+  return data ?? [];
+}
+
+// Mengambil aktivitas SELAIN tipe yang disebutkan
+export async function getOtherActivities(typesToExclude: string[]) {
+    const { data } = await supabase
+      .from('activities')
+      .select('*')
+      .not('type', 'in', `(${typesToExclude.join(',')})`)
+      .order('start_date', { ascending: false });
+    return data ?? [];
+}
